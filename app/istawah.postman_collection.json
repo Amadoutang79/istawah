@@ -1,0 +1,25 @@
+{
+  "info": { "name": "ISTAWAH API", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json" },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000/api" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    { "name": "Register", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}],
+      "url": "{{base_url}}/auth/register",
+      "body": { "mode": "raw", "raw": "{\"name\":\"Amadou\",\"email\":\"a@test.dev\",\"password\":\"Password@123\",\"password_confirmation\":\"Password@123\"}" } } },
+    { "name": "Login", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}],
+      "url": "{{base_url}}/auth/login",
+      "body": { "mode": "raw", "raw": "{\"email\":\"admin@istawah.test\",\"password\":\"Password@123\"}" } } },
+    { "name": "Me", "request": { "method": "GET",
+      "header": [{"key":"Authorization","value":"Bearer {{token}}"}],
+      "url": "{{base_url}}/auth/me" } },
+    { "name": "List Users", "request": { "method": "GET",
+      "header": [{"key":"Authorization","value":"Bearer {{token}}"}],
+      "url": "{{base_url}}/users" } },
+    { "name": "Create Project", "request": { "method": "POST",
+      "header": [{"key":"Authorization","value":"Bearer {{token}}"},{"key":"Content-Type","value":"application/json"}],
+      "url": "{{base_url}}/projects",
+      "body": { "mode": "raw", "raw": "{\"name\":\"Projet Alpha\",\"description\":\"Démo\"}" } } }
+  ]
+}
