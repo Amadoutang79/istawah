@@ -13,11 +13,11 @@ class EnsureUserHasRole
         $user = $request->user();
 
         if (! $user || ! $user->is_active) {
-            return response()->json(['message' => 'Non authentifié.'], 401);
+            return response()->json(['message' => 'Non authentifie.'], 401);
         }
 
         if (! $user->hasRole(...$roles)) {
-            return response()->json(['message' => 'Accès refusé.'], 403);
+            return response()->json(['message' => 'Acces refuse.'], 403);
         }
 
         return $next($request);
