@@ -20,11 +20,29 @@ class UserService
         ]);
     }
 
+    /**
+     * Mise à jour d'un utilisateur.
+     *
+     * Défense en profondeur : même si la Policy et le FormRequest
+     * ont déjà filtré, on vérifie ICI (au niveau métier) que seul
+     * un ADMIN peut modifier le champ `role`.
+     *
+     * Si un appelant non-admin tente de passer `role`, le champ est
+     * silencieusement ignoré (pas d'erreur, pas de fuite d'info).
+     */
     public function update(User $user, array $data): User
     {
+        $auth = auth()->user();
+
+        // Anti-élévation de privilèges : seul un ADMIN peut changer un rôle
         if (isset($data['role'])) {
-            $role = Role::where('name', $data['role'])->firstOrFail();
-            $user->role_id = $role->id;
+            if (! $auth || ! $auth->isAdmin()) {
+                // On ignore silencieusement le champ `role`
+                unset($data['role']);
+            } else {
+                $role = Role::where('name', $data['role'])->firstOrFail();
+                $user->role_id = $role->id;
+            }
         }
 
         $user->fill(collect($data)->except('role')->toArray());
@@ -33,6 +51,10 @@ class UserService
         return $user->refresh();
     }
 
+    /**
+     * Désactivation d'un utilisateur : passage en `is_active = false`
+     * et suppression de tous ses tokens (déconnexion forcée).
+     */
     public function deactivate(User $user): User
     {
         $user->update(['is_active' => false]);
